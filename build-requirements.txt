@@ -1,0 +1,2 @@
+# Install build tools: uv sync --group dev
+pyinstaller>=6.0
