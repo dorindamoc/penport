@@ -10,7 +10,7 @@ _APP_NAME = "Penport"
 
 
 def _db_path() -> Path:
-    data_dir = Path(user_data_dir(_APP_NAME))
+    data_dir = Path(user_data_dir(_APP_NAME, appauthor=False))
     data_dir.mkdir(parents=True, exist_ok=True)
     return data_dir / "tracker.db"
 
@@ -22,6 +22,7 @@ def _connect() -> sqlite3.Connection:
 
 
 def init_db() -> None:
+    print(f"Initializing database at {_db_path()}")
     with _connect() as conn:
         conn.execute(
             """
@@ -42,9 +43,7 @@ def init_db() -> None:
 
 def is_processed(inbox_path: str) -> bool:
     with _connect() as conn:
-        row = conn.execute(
-            "SELECT id FROM jobs WHERE inbox_path = ?", (inbox_path,)
-        ).fetchone()
+        row = conn.execute("SELECT id FROM jobs WHERE inbox_path = ?", (inbox_path,)).fetchone()
         return row is not None
 
 
