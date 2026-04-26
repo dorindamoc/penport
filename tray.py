@@ -215,10 +215,9 @@ class WorkerThread(threading.Thread):
             image_path: Path = self._job_queue.get()
             wx.CallAfter(self._tray.set_state, "processing")
             try:
+                print(f"Worker picked up job: {image_path}")
                 raw, corrected = run_pipeline(
-                    image_path,
-                    self._cfg,
-                    progress_cb=None,
+                    image_path, self._cfg, progress_cb=lambda msg: print(f"Progress: {msg}")
                 )
                 output_path = self._write_output(corrected or raw)
                 tracker.record_success(
@@ -230,6 +229,9 @@ class WorkerThread(threading.Thread):
                 )
                 wx.CallAfter(self._tray.notify_success, image_path.name, output_path)
             except Exception as exc:
+                import traceback
+                print(f"[worker] ERROR processing {image_path.name}:")
+                traceback.print_exc()
                 tracker.record_error(
                     filename=image_path.name,
                     inbox_path=str(image_path),
@@ -244,6 +246,7 @@ class WorkerThread(threading.Thread):
         output_dir.mkdir(parents=True, exist_ok=True)
         today = date.today().isoformat()
         out_file = output_dir / f"{today}.txt"
+        print(f"Writing output {text} to {out_file}")
         if out_file.exists():
             with open(out_file, "a", encoding="utf-8") as f:
                 f.write("\n---\n" + text)

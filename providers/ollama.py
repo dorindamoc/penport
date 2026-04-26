@@ -7,7 +7,8 @@ import requests
 from .base import BaseProvider, ProviderError
 
 _DEFAULT_TIMEOUT = 120
-_OLLAMA_URL = "http://localhost:11434/api/generate"
+_OLLAMA_BASE = "http://localhost:11434"
+_OLLAMA_URL = f"{_OLLAMA_BASE}/api/generate"
 
 
 class OllamaProvider(BaseProvider):
@@ -43,3 +44,16 @@ class OllamaProvider(BaseProvider):
             return resp.json().get("response", "")
         except Exception as exc:
             raise ProviderError(f"Ollama correct failed: {exc}") from exc
+
+    def validate_key(self) -> None:
+        if not self._model:
+            raise ProviderError("Ollama model name is empty — set it in Settings (e.g. 'llava').")
+        try:
+            resp = requests.get(_OLLAMA_BASE, timeout=5)
+            resp.raise_for_status()
+        except requests.exceptions.ConnectionError:
+            raise ProviderError(
+                "Ollama is not running — start it with 'ollama serve' or install from ollama.com."
+            )
+        except Exception as exc:
+            raise ProviderError(f"Cannot reach Ollama: {exc}")

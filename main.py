@@ -14,8 +14,8 @@ from watcher import Watcher
 
 def main() -> None:
     tracker.init_db()
-    cfg = load_config()
     first_run = not config_exists()
+    cfg = load_config()
 
     app = wx.App(False)
     app.SetAppName("Penport")

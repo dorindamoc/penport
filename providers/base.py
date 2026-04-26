@@ -13,3 +13,6 @@ class BaseProvider(ABC):
 
     @abstractmethod
     def correct(self, text: str, prompt: str) -> str: ...
+
+    def validate_key(self) -> None:
+        """Raise ProviderError if the API key is missing or rejected. Override per provider."""

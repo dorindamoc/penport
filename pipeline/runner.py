@@ -13,6 +13,7 @@ def run_pipeline(
     progress_cb: Callable[[str], None] | None = None,
 ) -> tuple[str, str]:
     """Return (raw_text, corrected_text). Raises on any failure."""
+    print(f"Running pipeline with config: {cfg}")
 
     def _progress(msg: str) -> None:
         if progress_cb is not None:
@@ -27,6 +28,11 @@ def run_pipeline(
         model=llm["vision_model"],
         timeout=60,
     )
+
+    _progress("Checking API key…")
+    print(f"[pipeline] validating {llm['vision_provider']} key")
+    vision_provider.validate_key()
+    print("[pipeline] key OK")
 
     _progress("Transcribing…")
     raw = transcribe(vision_provider, image_path, languages)

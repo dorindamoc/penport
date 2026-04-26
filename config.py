@@ -15,7 +15,7 @@ _CONFIG_PATH: Path | None = None
 def _config_path() -> Path:
     global _CONFIG_PATH
     if _CONFIG_PATH is None:
-        data_dir = Path(user_data_dir(APP_NAME))
+        data_dir = Path(user_data_dir(APP_NAME, appauthor=False))
         data_dir.mkdir(parents=True, exist_ok=True)
         _CONFIG_PATH = data_dir / "config.json"
     return _CONFIG_PATH

@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(python -c ' *)",
-      "Bash(uv sync *)"
+      "Bash(uv sync *)",
+      "Bash(.venv/Scripts/python.exe -c \"from google import genai; c = genai.Client\\(api_key='test'\\); print\\(dir\\(c\\)\\)\")",
+      "Bash(.venv/Scripts/python.exe -c \"from google import genai; c = genai.Client\\(api_key='test'\\); print\\([a for a in dir\\(c\\) if 'key' in a.lower\\(\\) or 'api' in a.lower\\(\\)]\\)\")",
+      "Bash(.venv/Scripts/python.exe -c \"from google.genai import errors; print\\(dir\\(errors\\)\\)\")",
+      "Bash(.venv/Scripts/python.exe -c ' *)"
     ]
   }
 }
