@@ -25,7 +25,7 @@ class SettingsWindow(wx.Dialog):
         self._build_ui()
         self._populate()
         self.Fit()
-        self.SetMinSize((520, -1))
+        self.SetMinSize(wx.Size(520, -1))
         self.Centre()
 
     # ------------------------------------------------------------------
@@ -129,7 +129,9 @@ class SettingsWindow(wx.Dialog):
         self._lang_primary = wx.TextCtrl(page)
         gs.Add(self._lang_primary, 1, wx.EXPAND)
 
-        gs.Add(wx.StaticText(page, label="Additional (comma-separated):"), 0, wx.ALIGN_CENTER_VERTICAL)
+        gs.Add(
+            wx.StaticText(page, label="Additional (comma-separated):"), 0, wx.ALIGN_CENTER_VERTICAL
+        )
         self._lang_additional = wx.TextCtrl(page)
         gs.Add(self._lang_additional, 1, wx.EXPAND)
 
@@ -146,7 +148,12 @@ class SettingsWindow(wx.Dialog):
         vbox.Add(self._correction_enabled, 0, wx.ALL, 8)
 
         hbox = wx.BoxSizer(wx.HORIZONTAL)
-        hbox.Add(wx.StaticText(page, label="Poll interval (seconds):"), 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 8)
+        hbox.Add(
+            wx.StaticText(page, label="Poll interval (seconds):"),
+            0,
+            wx.ALIGN_CENTER_VERTICAL | wx.RIGHT,
+            8,
+        )
         self._poll_interval = wx.SpinCtrl(page, min=10, max=3600, initial=300)
         hbox.Add(self._poll_interval, 0)
         vbox.Add(hbox, 0, wx.ALL, 8)

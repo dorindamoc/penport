@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import wx
-import wx.lib.scrolledpanel as scrolled
 
 import tracker
 
@@ -11,7 +10,7 @@ class LogWindow(wx.Frame):
         super().__init__(
             parent,
             title="Penport — Job Log",
-            size=(900, 550),
+            size=wx.Size(900, 550),
             style=wx.DEFAULT_FRAME_STYLE,
         )
         self._build_ui()
@@ -38,7 +37,7 @@ class LogWindow(wx.Frame):
         self._detail = wx.TextCtrl(
             panel,
             style=wx.TE_MULTILINE | wx.TE_READONLY | wx.BORDER_SUNKEN,
-            size=(-1, 160),
+            size=wx.Size(-1, 160),
         )
 
         # Toolbar

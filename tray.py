@@ -12,7 +12,6 @@ import wx
 import wx.adv
 
 import tracker
-from config import save_config
 from log_window import LogWindow
 from pipeline import run_pipeline
 from settings_window import SettingsWindow
@@ -46,20 +45,19 @@ class TrayIcon(wx.adv.TaskBarIcon):
     # Icon management
     # ------------------------------------------------------------------
 
-    def _load_icons(self) -> dict[str, wx.Icon]:
-        icons: dict[str, wx.Icon] = {}
+    def _load_icons(self) -> dict[str, wx.BitmapBundle]:
+        icons: dict[str, wx.BitmapBundle] = {}
         for name in ("idle", "processing", "error"):
             path = _ICON_DIR / f"{name}.png"
             if path.exists():
-                ico = wx.Icon()
-                ico.CopyFromBitmap(wx.Bitmap(str(path), wx.BITMAP_TYPE_PNG))
-                icons[name] = ico
+                bmp = wx.Bitmap(str(path), wx.BITMAP_TYPE_PNG)
+                icons[name] = wx.BitmapBundle(bmp)
             else:
                 # Fallback: coloured 16×16 bitmap
-                icons[name] = self._make_fallback_icon(name)
+                icons[name] = wx.BitmapBundle(self._make_fallback_bitmap(name))
         return icons
 
-    def _make_fallback_icon(self, name: str) -> wx.Icon:
+    def _make_fallback_bitmap(self, name: str) -> wx.Bitmap:
         colours = {"idle": (160, 160, 160), "processing": (50, 150, 250), "error": (220, 50, 50)}
         r, g, b = colours.get(name, (128, 128, 128))
         bmp = wx.Bitmap(16, 16)
@@ -67,13 +65,15 @@ class TrayIcon(wx.adv.TaskBarIcon):
         dc.SetBackground(wx.Brush(wx.Colour(r, g, b)))
         dc.Clear()
         dc.SelectObject(wx.NullBitmap)
-        ico = wx.Icon()
-        ico.CopyFromBitmap(bmp)
-        return ico
+        return bmp
 
     def _set_icon(self, state: TrayState) -> None:
         self._state = state
-        label = {"idle": "Penport — idle", "processing": "Penport — processing", "error": "Penport — error"}[state]
+        label = {
+            "idle": "Penport — idle",
+            "processing": "Penport — processing",
+            "error": "Penport — error",
+        }[state]
         if state == "processing":
             self._anim_timer.Start(500)
         else:
@@ -81,7 +81,7 @@ class TrayIcon(wx.adv.TaskBarIcon):
             self.SetIcon(self._icons[state], label)
 
     def _on_anim_tick(self, _event: wx.TimerEvent) -> None:
-        self.SetIcon(self._icons["processing"], "Penport — processing")
+        self.SetIcon(self._icons["processing"])
 
     def set_state(self, state: TrayState) -> None:
         self._set_icon(state)
@@ -201,6 +201,7 @@ class TrayIcon(wx.adv.TaskBarIcon):
 # ------------------------------------------------------------------
 # Worker thread
 # ------------------------------------------------------------------
+
 
 class WorkerThread(threading.Thread):
     def __init__(self, cfg: dict, job_queue: queue.Queue, tray: TrayIcon) -> None:
